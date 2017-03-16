@@ -23,11 +23,12 @@ $(shell mkdir -p $(CA_DIR) $(CERTS_DIR))
 
 all: templates ovpn
 
+
 hostdeps:
 	@# On a linux host, install the following
 	go get -u github.com/cloudflare/cfssl/cmd/...
 	sudo pip install j2cli
-	sudo apt-get -yq instal jq
+	sudo apt-get -yq instal jq openvpn
 
 
 templates:
@@ -52,21 +53,33 @@ $(CA_DIR)/ca-key.pem:
 	cfssl genkey -config=ca-cnf.json -profile=ca -initca ca-csr.json | cfssljson -bare $(CA_DIR)/ca
 
 
+$(CA_DIR)/ta.key:
+	openvpn --genkey --secret $(CA_DIR)/ta.key
+
+
 certs: $(CA_DIR)/ca-key.pem
 	@# Generate all certs signed by root CA
 	for i in $$(seq -f "%02g" 01 $(NUM_SERVERS) | awk '{print "server" $$0}') \
 	         $$(seq -f "%02g" 01 $(NUM_CLIENTS) | awk '{print "client" $$0}') \
 	         $$(seq -f "%02g" 01 $(NUM_PEERS) | awk '{print "peer" $$0}') ; do \
+	  PROFILE=""; \
+	  if echo $$i | grep -i client > /dev/null; then \
+	    PROFILE=client; \
+	  elif echo $$i | grep -i server > /dev/null; then \
+	    PROFILE=server; \
+	  elif echo $$i | grep -i peer > /dev/null; then \
+	    PROFILE=peer; \
+	  fi; \
 	  if [ ! -f $(CERTS_DIR)/$$i.pem ]; then \
 	    cat ca-csr.json | \
 	      jq ".CN=\"$$i\"" | jq ".hosts=[\"$$i\"]" | \
-	      cfssl gencert -config=ca-cnf.json -profile=client \
+	      cfssl gencert -config=ca-cnf.json -profile=$$PROFILE \
 	        -ca=$(CA_DIR)/ca.pem -ca-key=$(CA_DIR)/ca-key.pem - | \
 	      cfssljson -bare $(CERTS_DIR)/$$i; \
 	  fi; \
 	done
 
-ovpn: certs $(CA_DIR)/dh4096.pem
+ovpn: certs $(CA_DIR)/dh4096.pem $(CA_DIR)/ta.key
 	@# Generate OpenVPN configs per client
 	for i in $$(seq -f "%02g" 01 $(NUM_CLIENTS) | awk '{print "client" $$0}'); do \
 	  export C=$(CERTS_DIR)/$$i; \
@@ -83,6 +96,10 @@ ovpn: certs $(CA_DIR)/dh4096.pem
 	  echo "<key>" >> $$C.ovpn; \
 	  cat $$C-key.pem >> $$C.ovpn; \
 	  echo "</key>" >> $$C.ovpn; \
+	  echo "" >> $$C.ovpn; \
+	  echo "<tls-auth>" >> $$C.ovpn; \
+	  cat $(CA_DIR)/ta.key |grep -v "^#" >> $$C.ovpn; \
+	  echo "</tls-auth>" >> $$C.ovpn; \
 	  echo "" >> $$C.ovpn; \
 	  echo "<dh>" >> $$C.ovpn; \
 	  cat $(CA_DIR)/dh4096.pem >> $$C.ovpn; \
