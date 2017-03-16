@@ -1,0 +1,17 @@
+# this is a custom configuration not affiliated with CFSSL
+
+cfssl:
+  domain: davidwang.com
+  C: US
+  ST: California  
+  L: San Francisco
+  O: David Wang
+  OU: David Wang
+  validity: 876000h  # 100 years
+
+openvpn:
+  remote: vpn-divis.davidwang.com
+  port: 1194
+  dev: tun
+  proto: tcp
+

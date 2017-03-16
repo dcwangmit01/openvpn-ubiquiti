@@ -1,0 +1,17 @@
+# this is a custom configuration not affiliated with CFSSL
+
+cfssl:
+  domain: seesawsf.com
+  C: US
+  ST: California  
+  L: San Francisco
+  O: Seesaw SF
+  OU: Seesaw SF
+  validity: 876000h  # 100 years
+
+openvpn:
+  remote: vpn-oak.seesawsf.com
+  port: 1194
+  dev: tun
+  proto: tcp
+
