@@ -31,7 +31,8 @@ persist-tun
 # it tells the client to make sure that the (authenticated and signed) remote
 # certificate is a server certificate
 # - i.e. it was created using ./build-key-server and not just ./build-key
-ns-cert-type server
+# Commented: cfssl is unable to generate this old artifact of SSL
+# ns-cert-type server
 
 # We need to pass user credentials to the server (TOTP) before it will allow us
 # to connect
