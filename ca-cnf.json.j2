@@ -27,6 +27,23 @@
                     "key encipherment",
                     "client auth"
                 ]
+            },
+            "server": {
+                "expiry": "{{ cfssl.validity }}",
+                "usages": [
+                    "signing",
+                    "key encipherment",
+                    "server auth"
+                ]
+            },
+            "peer": {
+                "expiry": "{{ cfssl.validity }}",
+                "usages": [
+                    "signing",
+                    "key encipherment",
+                    "server auth",
+                    "client auth"
+                ]
             }
         }
     }
