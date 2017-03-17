@@ -1,0 +1,32 @@
+# this is a custom configuration not affiliated with CFSSL
+
+cfssl:
+  domain: example.com
+  C: US
+  ST: California  
+  L: San Francisco
+  O: Example Inc
+  OU: Example Department
+  validity: 876000h  # 100 years
+
+openvpn:
+  remote: vpn.example.com
+  port: 1194
+  dev: tun
+  proto: tcp
+  cipher:  AES-256-CBC
+  tls_cipher: DHE-RSA-AES256-SHA
+  client_verbosity: 4
+  server_verbosity: 4
+
+ubiquiti:
+  admin: ubnt
+  local_ip: 192.168.1.1
+  vpn_subnet: 192.168.100.0/24
+  dhcp_servers:
+  - 192.168.1.1
+  routes:
+  - 192.168.1.0 255.255.255.0
+  - 192.168.2.0 255.255.255.0
+  firewall:
+    outside_to_router: WAN_LOCAL

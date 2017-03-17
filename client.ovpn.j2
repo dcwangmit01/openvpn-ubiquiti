@@ -42,14 +42,14 @@ persist-tun
 # We want to use strong, industry standard encryption which works well on iOS
 # devices as well as other clients. (If you chose to use 128 bit encryption on
 # the server earlier (AES-128-CBC), you need to specify the same here too.)
-cipher AES-256-CBC
+cipher {{ openvpn.cipher }}
 
 # If your client is running a recent version of OpenVPN which supports NIST-
 # style names for cipher suites, you might get an error in the log about the
 # following name being deprecated.
 # If that's the case, you can get rid of the error by using the new name for
 # the same ciphersuite: TLS-DHE-RSA-WITH-AES-256-CBC-SHA
-tls-cipher DHE-RSA-AES256-SHA
+tls-cipher {{ openvpn.tls_cipher }}
 
 # Turn on adaptive fast LZO compression for the link. (If you didn't specify
 # this option on the server config, then don't include it here either.)
@@ -58,7 +58,7 @@ comp-lzo
 # Use medium level verbosity for the logs. For debug purposes, increase this to
 # a value between 6 - 11, where higher numbers give far more detail about what
 # is happening
-verb 4
+verb {{ openvpn.server_verbosity }}
 
 # Don't renegotiate the connection. If this isn't set, your connection will
 # drop after around 10 minutes (unless you re-enter your credentials).

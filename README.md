@@ -58,8 +58,8 @@ we are limited to non-current ciphers.
 # CUT AND PASTABLE
 
 # Configure some vars
-export USER=dave
-export UBIQUITY=192.168.10.1
+export USER=ubnt
+export UBIQUITY=192.168.1.1
 
 # Constants
 export CA_DIR=ca
@@ -83,8 +83,8 @@ The nicely documented settings have been taken from
 
 The following configs assume your Ubiquity has the following networks:
 
-* 192.168.10.0 255.255.255.0
-* 10.0.1.0 255.255.255.0
+* 192.168.1.0 255.255.255.0
+* 192.168.2.0 255.255.255.0
 
 You may have to modify code and instructions to be specific to your setup.
 
@@ -151,15 +151,15 @@ set interfaces openvpn vtun0 openvpn-option '--ifconfig-pool-persist /config/aut
 # your Edgerouter on your LAN (assuming that your Edgerouter is providing DNS
 # for your LAN, that is).
 # set interfaces openvpn vtun0 openvpn-option '--push redirect-gateway def1'
-set interfaces openvpn vtun0 openvpn-option "--push dhcp-option DNS 192.168.10.1"
+set interfaces openvpn vtun0 openvpn-option "--push dhcp-option DNS 192.168.1.1"
 
 # If you just want to make your LAN devices accessible from wherever you are
 # but don't want to route internet traffic via your VPN tunnel, then leave out
 # the following two lines and instead use something like (but replace the
 # subnet and mask with your actual subnet and mask):
 #set interfaces openvpn vtun0 openvpn-option "--push route 192.168.2.0 255.255.255.0"
-set interfaces openvpn vtun0 openvpn-option "--push route 192.168.10.0 255.255.255.0"
-set interfaces openvpn vtun0 openvpn-option "--push route 10.0.1.0 255.255.255.0"
+set interfaces openvpn vtun0 openvpn-option "--push route 192.168.1.0 255.255.255.0"
+set interfaces openvpn vtun0 openvpn-option "--push route 192.168.2.0 255.255.255.0"
 
 # Enable HMAC authentication of the TLS control channel, using the key we
 # generated earlier. The zero at the end is important, because it specifies the
@@ -233,14 +233,14 @@ set port-forward lan-interface eth1
 
 # Rule numbers are arbitrary
 set port-forward rule 50 description 'OpenVPN TCP'
-set port-forward rule 50 forward-to address 192.168.10.1
+set port-forward rule 50 forward-to address 192.168.1.1
 set port-forward rule 50 forward-to port 1194
 set port-forward rule 50 original-port 1194
 set port-forward rule 50 protocol tcp
 
 # Skip the following for UDP which we are not enabling
 #set port-forward rule 51 description 'OpenVPN UDP'
-#set port-forward rule 51 forward-to address 192.168.10.1
+#set port-forward rule 51 forward-to address 192.168.1.1
 #set port-forward rule 51 forward-to port 1194
 #set port-forward rule 51 original-port 1194
 #set port-forward rule 51 protocol udp
