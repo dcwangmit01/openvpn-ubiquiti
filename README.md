@@ -55,6 +55,10 @@ Edit and run ./bin/ubiquiti.sh
 The nicely documented settings have been taken from
 [GainfulShrimp](https://community.ubnt.com/t5/EdgeMAX/Secure-OpenVPN-server-setup-with-multi-factor-authentication/td-p/1240405) and ccustomized.
 
+The following configs assume your Ubiquity has two networks
+192.168.10.0/24 and 10.0.1.0/24.  You may have to modify code and
+instructions to be specific to your setup.
+
 ```
 
 # Start the configuration shell
