@@ -2,4 +2,5 @@
 *.ovpn
 ca/
 certs/
+config.yaml
 
