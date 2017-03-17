@@ -41,6 +41,7 @@ templates:
 	j2 -f yaml ca-cnf.json.j2 config.yaml > ca-cnf.json
 	j2 -f yaml ca-csr.json.j2 config.yaml > ca-csr.json
 	j2 -f yaml client.ovpn.j2 config.yaml > client.ovpn
+	j2 -f yaml README.md.j2 config.yaml > README.md
 
 
 $(CA_DIR)/dh4096.pem:

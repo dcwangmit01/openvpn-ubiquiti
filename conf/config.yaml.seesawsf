@@ -14,4 +14,18 @@ openvpn:
   port: 1194
   dev: tun
   proto: tcp
+  cipher:  AES-256-CBC
+  tls_cipher: DHE-RSA-AES256-SHA
+  client_verbosity: 4
+  server_verbosity: 4
+
+ubiquiti:
+  admin: dave
+  local_ip: 192.168.10.1
+  vpn_subnet: 192.168.100.0/24
+  dhcp_servers:
+  - 192.168.10.1
+  routes:
+  - 192.168.10.0 255.255.255.0
+  - 10.0.1.0 255.255.255.0
 

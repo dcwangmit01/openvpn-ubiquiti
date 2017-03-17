@@ -55,8 +55,8 @@ we are limited to non-current ciphers.
 # CUT AND PASTABLE
 
 # Configure some vars
-export USER=dave
-export UBIQUITY=192.168.10.1
+export USER={{ ubiquiti.admin }}
+export UBIQUITY={{ ubiquiti.local_ip }}
 
 # Constants
 export CA_DIR=ca
@@ -79,9 +79,9 @@ The nicely documented settings have been taken from
 [GainfulShrimp](https://community.ubnt.com/t5/EdgeMAX/Secure-OpenVPN-server-setup-with-multi-factor-authentication/td-p/1240405) and ccustomized.
 
 The following configs assume your Ubiquity has the following networks:
-
-* 192.168.10.0 255.255.255.0
-* 10.0.1.0 255.255.255.0
+{% for route in ubiquiti.routes %}
+* {{ route }}
+{%- endfor %}
 
 You may have to modify code and instructions to be specific to your setup.
 
@@ -94,7 +94,7 @@ configure
 # OpenVPN server if it also tried to listen on port 443 using TCP, so we'll
 # listen on port 1194 and use port-forwarding later so that we can reach our
 # server from the outside
-set interfaces openvpn vtun0 openvpn-option "--port 1194"
+set interfaces openvpn vtun0 openvpn-option "--port {{ openvpn.port }}"
 
 # By default, OpenVPN is peer-to-peer, but we want to put our instance in
 # 'multi-user server' mode
@@ -132,7 +132,7 @@ set interfaces openvpn vtun0 openvpn-option '--keepalive 8 60'
 # Set the verbosity level for the logs to a medium-low level. If you're having
 # trouble getting things working, you will want to set this to a value between
 # 6-11, where higher numbers give more debugging information
-set interfaces openvpn vtun0 openvpn-option '--verb 4'
+set interfaces openvpn vtun0 openvpn-option '--verb {{ openvpn.server_verbosity }}'
 
 # We trust all of our clients, so will allow them to communicate with each
 # other while connected via the VPN
@@ -148,15 +148,18 @@ set interfaces openvpn vtun0 openvpn-option '--ifconfig-pool-persist /config/aut
 # your Edgerouter on your LAN (assuming that your Edgerouter is providing DNS
 # for your LAN, that is).
 # set interfaces openvpn vtun0 openvpn-option '--push redirect-gateway def1'
-set interfaces openvpn vtun0 openvpn-option "--push dhcp-option DNS 192.168.10.1"
+{%- for dhcp_server in ubiquiti.dhcp_servers %}
+set interfaces openvpn vtun0 openvpn-option "--push dhcp-option DNS {{ dhcp_server }}"
+{%- endfor %}
 
 # If you just want to make your LAN devices accessible from wherever you are
 # but don't want to route internet traffic via your VPN tunnel, then leave out
 # the following two lines and instead use something like (but replace the
 # subnet and mask with your actual subnet and mask):
 #set interfaces openvpn vtun0 openvpn-option "--push route 192.168.2.0 255.255.255.0"
-set interfaces openvpn vtun0 openvpn-option "--push route 192.168.10.0 255.255.255.0"
-set interfaces openvpn vtun0 openvpn-option "--push route 10.0.1.0 255.255.255.0"
+{%- for route in ubiquiti.routes %}
+set interfaces openvpn vtun0 openvpn-option "--push route {{ route }}"
+{%- endfor %}
 
 # Enable HMAC authentication of the TLS control channel, using the key we
 # generated earlier. The zero at the end is important, because it specifies the
@@ -176,14 +179,14 @@ set interfaces openvpn vtun0 openvpn-option '--tls-auth /config/auth/keys/ta.key
 # strong and they are also well suited to ARM-powered clients such as iPhones.
 # You can amend this to AES-128-CBC to trade off some security for slightly
 # increased performance
-set interfaces openvpn vtun0 openvpn-option '--cipher AES-256-CBC'
+set interfaces openvpn vtun0 openvpn-option '--cipher {{ openvpn.cipher }}'
 
 # All the advice online seems to recommend using the snappily-named cipher
 # suite called TLS-DHE-RSA-WITH-AES-256-CBC-SHA for the control channel.
 # However, if you use that name in the following line, you'll receive an error.
 # That's because our OpenVPN server uses OpenSSL, which uses a different name
 # for the same cipher suite:
-set interfaces openvpn vtun0 openvpn-option '--tls-cipher DHE-RSA-AES256-SHA'
+set interfaces openvpn vtun0 openvpn-option '--tls-cipher {{ openvpn.tls_cipher }}'
 
 # The float option means that our clients can remain connected even if they
 # move IP addresses after they first authenticate (so long as the packets still
@@ -194,13 +197,13 @@ set interfaces openvpn vtun0 openvpn-option --float
 
 # Use TCP protocol for the tunnel (for compatibility with restrictive firewalls
 # remember), and passively accept connections from clients
-set interfaces openvpn vtun0 openvpn-option "--proto tcp"
+set interfaces openvpn vtun0 openvpn-option "--proto {{ openvpn.proto }}"
 # set interfaces openvpn vtun0 protocol tcp-passive
 
 # This is a virtual subnet used just for OpenVPN clients. I've chosen a
 # relatively obscure subnet here, to minimise the chance of it clashing with
 # whatever local subnet the client is connected to at the time.
-set interfaces openvpn vtun0 server subnet 192.168.100.0/24
+set interfaces openvpn vtun0 server subnet {{ ubiquiti.vpn_subnet }}
 
 # Use the certificates (public keys) and private key that we generated earlier.
 # If you chose to use 1024 bit strength when editing the 'vars' file, you'll
@@ -230,16 +233,16 @@ set port-forward lan-interface eth1
 
 # Rule numbers are arbitrary
 set port-forward rule 50 description 'OpenVPN TCP'
-set port-forward rule 50 forward-to address 192.168.10.1
-set port-forward rule 50 forward-to port 1194
-set port-forward rule 50 original-port 1194
+set port-forward rule 50 forward-to address {{ ubiquiti.local_ip }}
+set port-forward rule 50 forward-to port {{ openvpn.port }}
+set port-forward rule 50 original-port {{ openvpn.port }}
 set port-forward rule 50 protocol tcp
 
 # Skip the following for UDP which we are not enabling
 #set port-forward rule 51 description 'OpenVPN UDP'
-#set port-forward rule 51 forward-to address 192.168.10.1
-#set port-forward rule 51 forward-to port 1194
-#set port-forward rule 51 original-port 1194
+#set port-forward rule 51 forward-to address {{ ubiquiti.local_ip }}
+#set port-forward rule 51 forward-to port {{ openvpn.port }}
+#set port-forward rule 51 original-port {{ openvpn.port }}
 #set port-forward rule 51 protocol udp
 
 # Only enable listening on vtun0
@@ -249,9 +252,9 @@ set service dns forwarding listen-on vtun0
 
 set firewall name WAN_LOCAL rule 5 action accept
 set firewall name WAN_LOCAL rule 5 description 'Allow OpenVPN'
-set firewall name WAN_LOCAL rule 5 destination port 1194
+set firewall name WAN_LOCAL rule 5 destination port {{ openvpn.port }}
 set firewall name WAN_LOCAL rule 5 log disable
-set firewall name WAN_LOCAL rule 5 protocol tcp
+set firewall name WAN_LOCAL rule 5 protocol {{ openvpn.proto }}
 #set firewall name WAN_LOCAL rule 5 protocol tcp_udp
 
 commit

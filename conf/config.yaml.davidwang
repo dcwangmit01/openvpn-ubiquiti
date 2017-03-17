@@ -10,8 +10,21 @@ cfssl:
   validity: 876000h  # 100 years
 
 openvpn:
-  remote: vpn-divis.davidwang.com
+  remote: vpn.davidwang.com
   port: 1194
   dev: tun
   proto: tcp
+  cipher:  AES-256-CBC
+  tls_cipher: DHE-RSA-AES256-SHA
+  client_verbosity: 4
+  server_verbosity: 4
 
+ubiquiti:
+  admin: dave
+  local_ip: 192.168.3.1
+  vpn_subnet: 192.168.100.0/24
+  dhcp_servers:
+  - 192.168.3.1
+  routes:
+  - 192.168.3.0 255.255.255.0
+  - 192.168.4.0 255.255.255.0
