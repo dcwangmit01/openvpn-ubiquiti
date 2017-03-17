@@ -249,12 +249,12 @@ set service dns forwarding listen-on vtun0
 # Udp would have been vtun1, but we are not setting that up
 #set service dns forwarding listen-on vtun1
 
-set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 action accept
-set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 description 'Allow OpenVPN'
-set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 destination port {{ openvpn.port }}
-set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 log disable
-set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 protocol {{ openvpn.proto }}
-#set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 protocol tcp_udp
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 50 action accept
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 50 description 'Allow OpenVPN'
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 50 destination port {{ openvpn.port }}
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 50 log disable
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 50 protocol {{ openvpn.proto }}
+#set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 50 protocol tcp_udp
 
 commit
 save
