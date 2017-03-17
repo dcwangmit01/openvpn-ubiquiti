@@ -21,6 +21,9 @@ CA files will output to ./ca, and other certificate files to ./certs.
 Furthermore, instructions for configuring OpenVPN on Ubiquity EdgeOS
 Routers and OpenVPN clients are also included.
 
+This guide assumes you have setup your Ubiquity router with eth0 and eth1 as
+different vlans using the WAN+2LAN2 wizard (using the EdgeRouter Lite v1.9.1).
+
 ## Install the PreReqs
 
 The pre-reqs are openssl, openvpn, jq, j2cli, and cfssl.

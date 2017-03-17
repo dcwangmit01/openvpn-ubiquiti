@@ -28,3 +28,5 @@ ubiquiti:
   routes:
   - 192.168.3.0 255.255.255.0
   - 192.168.4.0 255.255.255.0
+  firewall:
+    outside_to_router: OUTSIDE-LOCAL

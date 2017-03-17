@@ -21,6 +21,9 @@ CA files will output to ./ca, and other certificate files to ./certs.
 Furthermore, instructions for configuring OpenVPN on Ubiquity EdgeOS
 Routers and OpenVPN clients are also included.
 
+This guide assumes you have setup your Ubiquity router with eth0 and eth1 as
+different vlans using the WAN+2LAN2 wizard (using the EdgeRouter Lite v1.9.1).
+
 ## Install the PreReqs
 
 The pre-reqs are openssl, openvpn, jq, j2cli, and cfssl.
@@ -250,12 +253,12 @@ set service dns forwarding listen-on vtun0
 # Udp would have been vtun1, but we are not setting that up
 #set service dns forwarding listen-on vtun1
 
-set firewall name WAN_LOCAL rule 5 action accept
-set firewall name WAN_LOCAL rule 5 description 'Allow OpenVPN'
-set firewall name WAN_LOCAL rule 5 destination port {{ openvpn.port }}
-set firewall name WAN_LOCAL rule 5 log disable
-set firewall name WAN_LOCAL rule 5 protocol {{ openvpn.proto }}
-#set firewall name WAN_LOCAL rule 5 protocol tcp_udp
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 action accept
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 description 'Allow OpenVPN'
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 destination port {{ openvpn.port }}
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 log disable
+set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 protocol {{ openvpn.proto }}
+#set firewall name {{ ubiquiti.firewall.outside_to_router }} rule 5 protocol tcp_udp
 
 commit
 save
