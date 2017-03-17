@@ -34,12 +34,8 @@ The pre-reqs are openssl, openvpn, jq, j2cli, and cfssl.
 ## How to use it
 
 * Edit the Makefile to set the quantities of each cert to generate
-* Create or link to an existing configuration
-  * Create a new config under ./conf/config.yaml.<your_config>
-  * Then create a link `ln -s ./conf/config.yaml.<your_config> ./config.yaml`
-  * Edit that configuration ./config.yaml
-* Make everything `make`
-
+* Edit the existing ./config.yaml (linked to ./conf/config.yaml.example)
+* Generate all templates and certificates with `make`.
 
 ## Ubiquiti EdgeOS OpenVPN Configuration
 
@@ -87,6 +83,8 @@ The following configs assume your Ubiquity has the following networks:
 * 192.168.2.0 255.255.255.0
 
 You may have to modify code and instructions to be specific to your setup.
+
+SSH to the router first, then paste these commands
 
 ```
 
@@ -250,12 +248,12 @@ set service dns forwarding listen-on vtun0
 # Udp would have been vtun1, but we are not setting that up
 #set service dns forwarding listen-on vtun1
 
-set firewall name WAN_LOCAL rule 5 action accept
-set firewall name WAN_LOCAL rule 5 description 'Allow OpenVPN'
-set firewall name WAN_LOCAL rule 5 destination port 1194
-set firewall name WAN_LOCAL rule 5 log disable
-set firewall name WAN_LOCAL rule 5 protocol tcp
-#set firewall name WAN_LOCAL rule 5 protocol tcp_udp
+set firewall name WAN_LOCAL rule 50 action accept
+set firewall name WAN_LOCAL rule 50 description 'Allow OpenVPN'
+set firewall name WAN_LOCAL rule 50 destination port 1194
+set firewall name WAN_LOCAL rule 50 log disable
+set firewall name WAN_LOCAL rule 50 protocol tcp
+#set firewall name WAN_LOCAL rule 50 protocol tcp_udp
 
 commit
 save
