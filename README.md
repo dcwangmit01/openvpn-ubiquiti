@@ -1,10 +1,12 @@
-# ssl-cert-tools
-Helper tools to drive cfssl for CA, certs, and OpenVPN
+# openvpn-ubiquity
 
 ## Purpose
 
-This package helps with the auto-generation of SSL certificates.  It
-also can create OpenVPN configurations for clients.
+This package helps with the auto-generation of SSL certificates and
+configuration of OpenVPN on Ubiquity Edgeos Routers and OpenVPN
+clients.  The cert generation parts of this package can be used to
+automatically create a basic CA along with server, client, and peer
+certificates for any use.
 
 It does the following:
 
@@ -13,10 +15,13 @@ It does the following:
 * Generates Server Certs
 * Generates Client Cert
 * Generates OpenVPN Peer Certs
-  ** Creates OpenVPN config files with certs inline for easy distribute
+  * Creates OpenVPN config files with certs inline for easy distribute
 
 It outputs CA related files to ./ca, and the various certificates
 under the ./certs directory.
+
+Furthermore, instructions for configuring OpenVPN on Ubiquity EdgeOS
+Routers and OpenVPN clients are included as well.
 
 ## Install the PreReqs
 
