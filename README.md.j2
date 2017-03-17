@@ -34,12 +34,8 @@ The pre-reqs are openssl, openvpn, jq, j2cli, and cfssl.
 ## How to use it
 
 * Edit the Makefile to set the quantities of each cert to generate
-* Create or link to an existing configuration
-  * Create a new config under ./conf/config.yaml.<your_config>
-  * Then create a link `ln -s ./conf/config.yaml.<your_config> ./config.yaml`
-  * Edit that configuration ./config.yaml
-* Make everything `make`
-
+* Edit the existing ./config.yaml (linked to ./conf/config.yaml.example)
+* Generate all templates and certificates with `make`.
 
 ## Ubiquiti EdgeOS OpenVPN Configuration
 
